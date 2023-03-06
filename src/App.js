@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { NavLink, Route, Routes } from 'react-router-dom';
 import Inicio from './components/Inicio';
@@ -11,50 +11,6 @@ import { createStore } from 'redux';
 import reducer from './reducers/tiendaReducer';
 
 const App = () => {
-  const [carrito, cambiarCarrito] = useState([]);
-
-  const agregarProductoCarrito = (idProductoAAgregar, nombreProducto) => {
-    //** Si el carrito no tiene elementos le agrego uno*/
-    if(carrito.length === 0){
-      cambiarCarrito([{id: idProductoAAgregar, nombre: nombreProducto, cantidad: 1}]);
-    }else{
-      // De otra forma tenemos que revisar que el carrito no tenga ya el producto a agregar
-      // Si ya lo tiene entonces tenemos que actualizar el valor de "cantidad"
-      // Si no tiene el producto entonces lo agregamos
-
-      // Para poder editar el arreglo tenemos que clonarlo
-      const nuevoCarrito = [...carrito];
-
-      // Comprobamos si el carrito ya tiene el Id del producto a agregar
-      // Esto me retorna true si encuentra productos en carrito y false si no hay ninguno
-      const enCarrito = nuevoCarrito.filter((productoDeCarrito) => {
-        return productoDeCarrito.id === idProductoAAgregar
-      }).length > 0;
-      // Si ya tiene el producto entonces lo tenemos que actualizar
-      if(enCarrito){
-        // Para ello tenemos que buscarlo, obtener su posicion en el arreglo.
-        // y en base a su posicion ya actualizar el valor de "cantidad"
-        nuevoCarrito.forEach((productoDeCarrito, index) => {
-          if(productoDeCarrito.id === idProductoAAgregar){
-            const cantidad = nuevoCarrito[index].cantidad;
-            nuevoCarrito[index] = {
-              id: idProductoAAgregar, 
-              nombre:nombreProducto, 
-              cantidad: cantidad+1
-            };
-          }
-        })
-      }else{
-        // De otra forma entonces agregamos el producto al arreglo
-        nuevoCarrito.push(
-          {id: idProductoAAgregar, nombre: nombreProducto, cantidad: 1}
-        )
-      }
-      // Por ultimo actualizo el carrito
-      cambiarCarrito(nuevoCarrito);
-    }
-  };
-
   const store = createStore(reducer);
 
   return (
@@ -70,16 +26,11 @@ const App = () => {
             <Route path='*' element={<Error404/>}/>
             <Route path='/' element={<Inicio/>}/>
             <Route path='/blog' element={<Blog/>}/>
-            <Route path='/tienda' element={
-                <Tienda
-                  agregarProductoCarrito={agregarProductoCarrito}
-                />
-              }
-            />
+            <Route path='/tienda' element={<Tienda/>}/>
           </Routes>
         </main>
         <aside>
-          <Carrito carrito={carrito}/>
+          <Carrito/>
         </aside>
       </Contenedor>
     </Provider>
