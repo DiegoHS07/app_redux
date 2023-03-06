@@ -6,15 +6,11 @@ import Blog from './components/Blog';
 import Tienda from './components/Tienda';
 import Error404 from './components/Error404';
 import Carrito from './components/Carrito';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import reducer from './reducers/tiendaReducer';
 
 const App = () => {
-  const productos = [
-    {id: 1, nombre: 'Producto 1'},
-    {id: 2, nombre: 'Producto 2'},
-    {id: 3, nombre: 'Producto 3'},
-    {id: 4, nombre: 'Producto 4'},
-  ];
-
   const [carrito, cambiarCarrito] = useState([]);
 
   const agregarProductoCarrito = (idProductoAAgregar, nombreProducto) => {
@@ -59,31 +55,34 @@ const App = () => {
     }
   };
 
+  const store = createStore(reducer);
+
   return (
-    <Contenedor>
-      <Menu>
-        <NavLink to="/">Inicio</NavLink>
-        <NavLink to="/blog">Blog</NavLink>
-        <NavLink to="/tienda">Tienda</NavLink>
-      </Menu>
-      <main>
-        <Routes>
-          <Route path='*' element={<Error404/>}/>
-          <Route path='/' element={<Inicio/>}/>
-          <Route path='/blog' element={<Blog/>}/>
-          <Route path='/tienda' element={
-              <Tienda 
-                productos={productos} 
-                agregarProductoCarrito={agregarProductoCarrito}
-              />
-            }
-          />
-        </Routes>
-      </main>
-      <aside>
-        <Carrito carrito={carrito}/>
-      </aside>
-    </Contenedor>
+    <Provider store={store}>
+      <Contenedor>
+        <Menu>
+          <NavLink to="/">Inicio</NavLink>
+          <NavLink to="/blog">Blog</NavLink>
+          <NavLink to="/tienda">Tienda</NavLink>
+        </Menu>
+        <main>
+          <Routes>
+            <Route path='*' element={<Error404/>}/>
+            <Route path='/' element={<Inicio/>}/>
+            <Route path='/blog' element={<Blog/>}/>
+            <Route path='/tienda' element={
+                <Tienda
+                  agregarProductoCarrito={agregarProductoCarrito}
+                />
+              }
+            />
+          </Routes>
+        </main>
+        <aside>
+          <Carrito carrito={carrito}/>
+        </aside>
+      </Contenedor>
+    </Provider>
   );
 }
 
